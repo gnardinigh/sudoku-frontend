@@ -4,21 +4,27 @@ const canvas = document.getElementById("board-canvas")
 
 const puzzlesUrl = `http://localhost:3000/api/v1/puzzles/`
 
-const puzzlesContainer = document.getElementById('puzzles-container')
-const puzzlesList = document.getElementById('puzzles-list')
+const formContainer = document.getElementById('form-container')
+const numberInput = document.getElementById('number-input')
+
+let currRow;
+let currCol;
+let currBoard;
+
 
 function displayPuzzle(id){
   // let url = puzzlesUrl/${id}
   fetch(puzzlesUrl + id).then(res => res.json()).then(function(puzzle){
-    let board = new Board(canvas, puzzle.numbers)
-    board.render()
+    let board = new Board(canvas, puzzle.numbers, puzzle.start)
+    currBoard = board
+    currBoard.render()
   })
 }
 
-displayPuzzle(1)
+displayPuzzle(4)
 
 canvas.addEventListener("click", (event)=>{
-  let row = Math.floor((event.y-15)/(500/9))
+  let row = Math.floor((event.y)/(500/9))
   let column = Math.floor((event.x)/(500/9))
   if(row >= 9){
     row = 8
@@ -26,15 +32,44 @@ canvas.addEventListener("click", (event)=>{
   if(column === 9){
     column = 8
   }
-  console.log(`row = ${row}`)
-  console.log(`column = ${column}`)
-  checkIfBlank(row, column)
+  currRow = row
+  currCol = column
+  console.log(`row = ${currRow}`)
+  console.log(`column = ${currCol}`)
+  if(checkIfBlank()){
+    createForm()
+  }
+  else {
+    console.log("Already filled out!")
+    clearForm()
+  }
+  // clearForm()
 })
 
-function checkIfBlank(row, column){
-  let clickNumber = boards[0].panel[column][row]
-  console.log(clickNumber)
+function checkIfBlank(){
+  let clickedNumber = currBoard.panel[currCol][currRow]
+  return clickedNumber === ""
+  }
+
+function createForm(){
+  let input = `<input id="number" type="text" name="number" value="" maxlength="1" pattern="[1-9]"><br> <input type="submit" value="Submit"> `
+  numberInput.innerHTML = input
 }
+
+function clearForm(){
+  numberInput.innerHTML = ""
+}
+
+numberInput.addEventListener("submit", function(event){
+  event.preventDefault()
+  let input = document.getElementById("number").value
+  console.log(`row = ${currRow}`)
+  console.log(`column = ${currCol}`)
+  currBoard.panel[currCol][currRow] = input
+  currBoard.render()
+  clearForm()
+})
+
 
 // function displayPuzzles(){
 //   fetch(puzzlesUrl).then(res => res.json()).then(function(puzzles){

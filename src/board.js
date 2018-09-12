@@ -2,10 +2,8 @@ let boards = []
 
 class Board{
 
-  constructor(canvas, numbers){
-    let numbersArr = numbers.split("")
-    numbersArr[2] = ""
-    numbersArr[40] = ""
+  constructor(canvas, numbers, start){
+    let startArr = start.split("")
     this.canvas = canvas
     this.panel = []
     let index = 0
