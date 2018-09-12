@@ -34,8 +34,6 @@ canvas.addEventListener("click", (event)=>{
   }
   currRow = row
   currCol = column
-  console.log(`row = ${currRow}`)
-  console.log(`column = ${currCol}`)
   if(checkIfBlank()){
     createForm()
   }
@@ -47,7 +45,7 @@ canvas.addEventListener("click", (event)=>{
 })
 
 function checkIfBlank(){
-  let clickedNumber = currBoard.panel[currCol][currRow]
+  let clickedNumber = currBoard.originalBoard[currCol][currRow]
   return clickedNumber === ""
   }
 
@@ -63,8 +61,6 @@ function clearForm(){
 numberInput.addEventListener("submit", function(event){
   event.preventDefault()
   let input = document.getElementById("number").value
-  console.log(`row = ${currRow}`)
-  console.log(`column = ${currCol}`)
   currBoard.panel[currCol][currRow] = input
   currBoard.render()
   clearForm()
