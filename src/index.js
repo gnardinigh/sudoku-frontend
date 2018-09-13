@@ -17,16 +17,12 @@ let currBoard;
 
 
 function displayPuzzle(id){
-  debugger
-  // let url = puzzlesUrl/${id}
   fetch(puzzlesUrl + id).then(res => res.json()).then(function(puzzle){
     let board = new Board(canvas, puzzle.numbers, puzzle.start)
     currBoard = board
     currBoard.render()
   })
 }
-
-displayPuzzle(puzzleId)
 
 canvas.addEventListener("click", (event)=>{
   let row = Math.floor((event.y)/(500/9))
@@ -131,7 +127,13 @@ viewPuzzlesBtn.addEventListener("click", function(event){
 
 const puzzlesContainer = document.getElementById("puzzles-container")
 puzzlesContainer.addEventListener("click", function(event){
-  displayPuzzle(parseInt(event.target.id))
+  if(puzzleId === parseInt(event.target.id)){
+    alert("You're already on this Suduko!")
+  }
+  else{
+    puzzleId = parseInt(event.target.id)
+    displayPuzzle(puzzleId)
+  }
 })
 
 function displayPuzzles(){
@@ -141,6 +143,7 @@ function displayPuzzles(){
       let HtmlToAdd = `<a id='${puzzle.id}'> ${puzzle.id}  </a>`
       viewPuzzles.innerHTML += HtmlToAdd
     })
+    viewPuzzles.innerHTML += `<br><br>`
   })
 
 }

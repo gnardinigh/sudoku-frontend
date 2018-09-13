@@ -1,6 +1,5 @@
 
 let puzzleId;
-puzzleId = 5;
 
 const userFormInput = document.getElementById("user-input")
 const timer = document.getElementById('timer-display')
