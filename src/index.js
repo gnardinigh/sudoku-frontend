@@ -3,9 +3,15 @@ document.addEventListener("DOMContentLoaded", function() {
 const canvas = document.getElementById("board-canvas")
 
 const puzzlesUrl = `http://localhost:3000/api/v1/puzzles/`
+const scoresUrl = `http://localhost:3000/api/v1/scores`
+const usersUrl = `http://localhost:3000/api/v1/users`
 
 const formContainer = document.getElementById('form-container')
 const numberInput = document.getElementById('number-input')
+const leaderboardContainer = document.getElementById('leaderboard')
+
+let puzzleId;
+puzzleId = 4;
 
 let currRow;
 let currCol;
@@ -21,7 +27,7 @@ function displayPuzzle(id){
   })
 }
 
-displayPuzzle(4)
+displayPuzzle(puzzleId)
 
 canvas.addEventListener("click", (event)=>{
   let row = Math.floor((event.y)/(500/9))
@@ -65,6 +71,51 @@ numberInput.addEventListener("submit", function(event){
   currBoard.render()
   clearForm()
 })
+
+
+
+function sortScores(scores){
+  sortedScores = scores.sort(function(a,b){
+    return b.points - a.points
+  })
+  return sortedScores
+}
+
+
+function getUserNames(sortedScores,callback){
+  let leaderboard = [];
+  fetch(usersUrl).then(res => res.json()).then(function(users){
+    sortedScores.forEach(function(score){
+      let name = users[score.user_id-1].name
+      leaderboard.push({name: name, points: score.points})
+    })
+    callback(leaderboard)
+  })
+
+}
+
+
+function getScores(callback){
+  fetch(scoresUrl).then(res => res.json()).then(function(scoreList){
+    let scores = scoreList.filter(score => score.puzzle_id === puzzleId)
+    let sortedScores = sortScores(scores)
+    getUserNames(sortedScores,callback)
+  })
+}
+
+getScores((leaderboard)=>{
+  counter = 1
+  leaderboardContainer.innerHTML = `Leaderboard <br></br>`
+  leaderboard.forEach((score)=>{
+    leaderboardContainer.innerHTML += `${counter}.  `
+    leaderboardContainer.innerHTML += score.name
+    leaderboardContainer.innerHTML += `  `
+    leaderboardContainer.innerHTML += score.points
+    leaderboardContainer.innerHTML += `<br></br>`
+    counter++
+  })
+}) //To be moved to function used when user finishes puzzle
+
 
 
 // function displayPuzzles(){
