@@ -1,8 +1,19 @@
 
 let puzzleId;
+puzzleId = 4
 
 const userFormInput = document.getElementById("user-input")
 const timer = document.getElementById('timer-display')
+const scoresUrl = `http://localhost:3000/api/v1/scores`
+const usersUrl = `http://localhost:3000/api/v1/users`
+
+const numberInput = document.getElementById('number-input')
+
+const leaderboardContainer = document.getElementById('leaderboard')
+
+let currRow;
+let currCol;
+let currBoard;
 
 let secondLimit = 600
 
@@ -11,6 +22,42 @@ let interval = setInterval(function(){ myTimer() }, 1000);
 function myTimer() {
   timer.innerHTML = `${secondLimit}`
   secondLimit = secondLimit  - 1;
+}
+
+numberInput.addEventListener("submit", function(event){
+  event.preventDefault()
+  let input = document.getElementById("number").value
+  currBoard.panel[currCol][currRow] = input
+  currBoard.checkedTracker[currCol][currRow] = 0
+  currBoard.render()
+  clearForm()
+})
+
+function sortScores(scores){
+  sortedScores = scores.sort(function(a,b){
+    return b.points - a.points
+  })
+  return sortedScores
+}
+
+function getUserNames(sortedScores,callback){
+  let leaderboard = [];
+  fetch(usersUrl).then(res => res.json()).then(function(users){
+    sortedScores.forEach(function(score){
+      let name = users[score.user_id-1].name
+      leaderboard.push({name: name, points: score.points})
+    })
+    callback(leaderboard)
+  })
+
+}
+
+function getScores(callback){
+  fetch(scoresUrl).then(res => res.json()).then(function(scoreList){
+    let scores = scoreList.filter(score => score.puzzle_id === puzzleId)
+    let sortedScores = sortScores(scores)
+    getUserNames(sortedScores,callback)
+  })
 }
 
 userFormInput.addEventListener("submit", function(event){
@@ -29,7 +76,18 @@ userFormInput.addEventListener("submit", function(event){
     body: JSON.stringify({points: secondLimit, user_id: user_id, puzzle_id: puzzle_id})
     })
   })
-  // createNewScore(user, score, puzzle_id)
+  getScores((leaderboard)=>{
+    counter = 1
+    leaderboardContainer.innerHTML = `Leaderboard <br></br>`
+    leaderboard.forEach((score)=>{
+      leaderboardContainer.innerHTML += `${counter}.  `
+      leaderboardContainer.innerHTML += score.name
+      leaderboardContainer.innerHTML += `  `
+      leaderboardContainer.innerHTML += score.points
+      leaderboardContainer.innerHTML += `<br>`
+      counter++
+    })
+  })
 })
 
 function createNewUser(username){
@@ -50,6 +108,10 @@ function createNewScore(name, callback){
     puzzle_id = puzzleId
     callback(user_id, puzzle_id)
   })
+}
+
+function clearForm(){
+  numberInput.innerHTML = ""
 }
 
 

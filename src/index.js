@@ -3,18 +3,12 @@ document.addEventListener("DOMContentLoaded", function() {
 const canvas = document.getElementById("board-canvas")
 
 const puzzlesUrl = `http://localhost:3000/api/v1/puzzles/`
-const scoresUrl = `http://localhost:3000/api/v1/scores`
-const usersUrl = `http://localhost:3000/api/v1/users`
+
 
 const formContainer = document.getElementById('form-container')
-const numberInput = document.getElementById('number-input')
+
 const leaderboardContainer = document.getElementById('leaderboard')
 const checkPuzzleButton = document.getElementById('check-puzzle')
-
-let currRow;
-let currCol;
-let currBoard;
-
 
 function displayPuzzle(id){
   fetch(puzzlesUrl + id).then(res => res.json()).then(function(puzzle){
@@ -23,6 +17,8 @@ function displayPuzzle(id){
     currBoard.render()
   })
 }
+
+displayPuzzle(puzzleId)
 
 canvas.addEventListener("click", (event)=>{
   let row = Math.floor((event.y)/(500/9))
@@ -59,58 +55,7 @@ function clearForm(){
   numberInput.innerHTML = ""
 }
 
-numberInput.addEventListener("submit", function(event){
-  event.preventDefault()
-  let input = document.getElementById("number").value
-  currBoard.panel[currCol][currRow] = input
-  currBoard.checkedTracker[currCol][currRow] = 0
-  currBoard.render()
-  clearForm()
-})
-
-
-
-function sortScores(scores){
-  sortedScores = scores.sort(function(a,b){
-    return b.points - a.points
-  })
-  return sortedScores
-}
-
-
-function getUserNames(sortedScores,callback){
-  let leaderboard = [];
-  fetch(usersUrl).then(res => res.json()).then(function(users){
-    sortedScores.forEach(function(score){
-      let name = users[score.user_id-1].name
-      leaderboard.push({name: name, points: score.points})
-    })
-    callback(leaderboard)
-  })
-
-}
-
-
-function getScores(callback){
-  fetch(scoresUrl).then(res => res.json()).then(function(scoreList){
-    let scores = scoreList.filter(score => score.puzzle_id === puzzleId)
-    let sortedScores = sortScores(scores)
-    getUserNames(sortedScores,callback)
-  })
-}
-
-getScores((leaderboard)=>{
-  counter = 1
-  leaderboardContainer.innerHTML = `Leaderboard <br></br>`
-  leaderboard.forEach((score)=>{
-    leaderboardContainer.innerHTML += `${counter}.  `
-    leaderboardContainer.innerHTML += score.name
-    leaderboardContainer.innerHTML += `  `
-    leaderboardContainer.innerHTML += score.points
-    leaderboardContainer.innerHTML += `<br>`
-    counter++
-  })
-}) //To be moved to function used when user finishes puzzle
+ //To be moved to function used when user finishes puzzle
 
 checkPuzzleButton.addEventListener("click", function(event){
   currBoard.renderAndCheck()
@@ -140,7 +85,7 @@ function displayPuzzles(){
   fetch(`http://localhost:3000/api/v1/puzzles`).then(res => res.json()).then(function(puzzles){
     viewPuzzles.innerHTML = ""
     puzzles.forEach(function(puzzle){
-      let HtmlToAdd = `<a id='${puzzle.id}'> ${puzzle.id}  </a>`
+      let HtmlToAdd = `<a id='${puzzle.id}'> Puzzle ${puzzle.id}  </a>`
       viewPuzzles.innerHTML += HtmlToAdd
     })
     viewPuzzles.innerHTML += `<br><br>`
