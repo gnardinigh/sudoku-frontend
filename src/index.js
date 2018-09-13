@@ -9,9 +9,7 @@ const usersUrl = `http://localhost:3000/api/v1/users`
 const formContainer = document.getElementById('form-container')
 const numberInput = document.getElementById('number-input')
 const leaderboardContainer = document.getElementById('leaderboard')
-
-let puzzleId;
-puzzleId = 4;
+const checkPuzzleButton = document.getElementById('check-puzzle')
 
 let currRow;
 let currCol;
@@ -47,7 +45,7 @@ canvas.addEventListener("click", (event)=>{
     console.log("Already filled out!")
     clearForm()
   }
-  // clearForm()
+
 })
 
 function checkIfBlank(){
@@ -56,7 +54,7 @@ function checkIfBlank(){
   }
 
 function createForm(){
-  let input = `<input id="number" type="text" name="number" value="" maxlength="1" pattern="[1-9]"><br> <input type="submit" value="Submit"> `
+  let input = `<input id="number" type="text" autofocus="autofocus" name="number" value="" maxlength="1" pattern="[1-9]"><br> <input type="submit" value="Submit"> `
   numberInput.innerHTML = input
 }
 
@@ -68,6 +66,7 @@ numberInput.addEventListener("submit", function(event){
   event.preventDefault()
   let input = document.getElementById("number").value
   currBoard.panel[currCol][currRow] = input
+  currBoard.checkedTracker[currCol][currRow] = 0
   currBoard.render()
   clearForm()
 })
@@ -111,12 +110,14 @@ getScores((leaderboard)=>{
     leaderboardContainer.innerHTML += score.name
     leaderboardContainer.innerHTML += `  `
     leaderboardContainer.innerHTML += score.points
-    leaderboardContainer.innerHTML += `<br></br>`
+    leaderboardContainer.innerHTML += `<br>`
     counter++
   })
 }) //To be moved to function used when user finishes puzzle
 
-
+checkPuzzleButton.addEventListener("click", function(event){
+  currBoard.renderAndCheck()
+})
 
 // function displayPuzzles(){
 //   fetch(puzzlesUrl).then(res => res.json()).then(function(puzzles){
