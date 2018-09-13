@@ -17,6 +17,7 @@ let currBoard;
 
 
 function displayPuzzle(id){
+  debugger
   // let url = puzzlesUrl/${id}
   fetch(puzzlesUrl + id).then(res => res.json()).then(function(puzzle){
     let board = new Board(canvas, puzzle.numbers, puzzle.start)
@@ -118,6 +119,31 @@ getScores((leaderboard)=>{
 checkPuzzleButton.addEventListener("click", function(event){
   currBoard.renderAndCheck()
 })
+
+
+const viewPuzzlesBtn = document.getElementById("view-puzzles-button")
+const viewPuzzles = document.getElementById("view-puzzles")
+
+viewPuzzlesBtn.addEventListener("click", function(event){
+  displayPuzzles()
+})
+
+
+const puzzlesContainer = document.getElementById("puzzles-container")
+puzzlesContainer.addEventListener("click", function(event){
+  displayPuzzle(parseInt(event.target.id))
+})
+
+function displayPuzzles(){
+  fetch(`http://localhost:3000/api/v1/puzzles`).then(res => res.json()).then(function(puzzles){
+    viewPuzzles.innerHTML = ""
+    puzzles.forEach(function(puzzle){
+      let HtmlToAdd = `<a id='${puzzle.id}'> ${puzzle.id}  </a>`
+      viewPuzzles.innerHTML += HtmlToAdd
+    })
+  })
+
+}
 
 // function displayPuzzles(){
 //   fetch(puzzlesUrl).then(res => res.json()).then(function(puzzles){

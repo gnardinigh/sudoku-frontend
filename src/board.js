@@ -53,6 +53,7 @@ function createNewScore(name, callback){
   })
 }
 
+
 let boards = []
 
 class Board{
