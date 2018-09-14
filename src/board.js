@@ -6,10 +6,21 @@ const userFormInput = document.getElementById("user-input")
 const timer = document.getElementById('timer-display')
 const scoresUrl = `http://localhost:3000/api/v1/scores`
 const usersUrl = `http://localhost:3000/api/v1/users`
+const puzzlesUrl = `http://localhost:3000/api/v1/puzzles/`
+const canvas = document.getElementById("board-canvas")
 
 const numberInput = document.getElementById('number-input')
 
 const leaderboardContainer = document.getElementById('leaderboard')
+
+function displayPuzzle(id){
+  puzzleId = id
+  fetch(puzzlesUrl + id).then(res => res.json()).then(function(puzzle){
+    let board = new Board(canvas, puzzle.numbers, puzzle.start)
+    currBoard = board
+    currBoard.render()
+  })
+}
 
 let currRow;
 let currCol;
@@ -114,6 +125,63 @@ function clearForm(){
   numberInput.innerHTML = ""
 }
 
+
+const easyBtn = document.getElementById("easy")
+const mediumBtn = document.getElementById("medium")
+const hardBtn = document.getElementById("hard")
+const mysteryBtn = document.getElementById("mystery")
+
+easyBtn.addEventListener("click", function(event){
+  getAndAddEasyPuzzles()
+})
+
+function getAndAddEasyPuzzles(){
+  fetch(`http://localhost:3000/api/v1/puzzles`).then(res => res.json()).then(function(puzzles){
+    let easyPuzzles = puzzles.filter(puzzle => puzzle.difficulty === "easy")
+    let randomNum = Math.floor(Math.random() * easyPuzzles.length)
+    let randomId = easyPuzzles[randomNum].id
+    displayPuzzle(randomId)
+  })
+}
+
+mediumBtn.addEventListener("click", function(event){
+  getAndAddMediumPuzzles()
+})
+
+function getAndAddMediumPuzzles(){
+  fetch(`http://localhost:3000/api/v1/puzzles`).then(res => res.json()).then(function(puzzles){
+    let mediumPuzzles = puzzles.filter(puzzle => puzzle.difficulty === "medium")
+    let randomNum = Math.floor(Math.random() * mediumPuzzles.length)
+    let randomId = mediumPuzzles[randomNum].id
+    displayPuzzle(randomId)
+  })
+}
+
+hardBtn.addEventListener("click", function(event){
+  getAndAddHardPuzzles()
+})
+
+function getAndAddHardPuzzles(){
+  fetch(`http://localhost:3000/api/v1/puzzles`).then(res => res.json()).then(function(puzzles){
+    let hardPuzzles = puzzles.filter(puzzle => puzzle.difficulty === "hard")
+    let randomNum = Math.floor(Math.random() * hardPuzzles.length)
+    let randomId = hardPuzzles[randomNum].id
+    displayPuzzle(randomId)
+  })
+}
+
+mysteryBtn.addEventListener("click", function(event){
+  getAndAddMysteryPuzzles()
+})
+
+function getAndAddMysteryPuzzles(){
+  fetch(`http://localhost:3000/api/v1/puzzles`).then(res => res.json()).then(function(puzzles){
+    let mysteryPuzzles = puzzles.filter(puzzle => puzzle.difficulty === "mystery")
+    let randomNum = Math.floor(Math.random() * mysteryPuzzles.length)
+    let randomId = mysteryPuzzles[randomNum].id
+    displayPuzzle(randomId)
+  })
+}
 
 let boards = []
 

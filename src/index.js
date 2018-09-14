@@ -1,22 +1,9 @@
 document.addEventListener("DOMContentLoaded", function() {
 
-const canvas = document.getElementById("board-canvas")
-
-const puzzlesUrl = `http://localhost:3000/api/v1/puzzles/`
-
-
 const formContainer = document.getElementById('form-container')
 
-const leaderboardContainer = document.getElementById('leaderboard')
 const checkPuzzleButton = document.getElementById('check-puzzle')
 
-function displayPuzzle(id){
-  fetch(puzzlesUrl + id).then(res => res.json()).then(function(puzzle){
-    let board = new Board(canvas, puzzle.numbers, puzzle.start)
-    currBoard = board
-    currBoard.render()
-  })
-}
 
 displayPuzzle(puzzleId)
 
@@ -51,10 +38,6 @@ function createForm(){
   numberInput.innerHTML = input
 }
 
-function clearForm(){
-  numberInput.innerHTML = ""
-}
-
  //To be moved to function used when user finishes puzzle
 
 checkPuzzleButton.addEventListener("click", function(event){
@@ -85,13 +68,14 @@ function displayPuzzles(){
   fetch(`http://localhost:3000/api/v1/puzzles`).then(res => res.json()).then(function(puzzles){
     viewPuzzles.innerHTML = ""
     puzzles.forEach(function(puzzle){
-      let HtmlToAdd = `<a id='${puzzle.id}'> Puzzle ${puzzle.id}  </a>`
+      let HtmlToAdd = `<a id='${puzzle.id}'> ${puzzle.id} (${puzzle.difficulty}) </a>`
       viewPuzzles.innerHTML += HtmlToAdd
     })
     viewPuzzles.innerHTML += `<br><br>`
   })
 
 }
+
 
 // function displayPuzzles(){
 //   fetch(puzzlesUrl).then(res => res.json()).then(function(puzzles){
