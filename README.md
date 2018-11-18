@@ -1,4 +1,4 @@
-# Project Title
+# Sudoku
 
 Sudoku is a SPA that generates original Sudoku boards for users to play and rank their performance. Written with 
 vanilla JavaScript and focused on a central canvas, where the board graphics are drawn. A rails API generates the 
