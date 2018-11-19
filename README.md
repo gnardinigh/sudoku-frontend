@@ -34,8 +34,10 @@ copy the absolute path of index.html into your browser
 * [PostgreSQL](https://www.postgresql.org/docs/) - databases
 
 ## Screen Caps:
+### Click an empty square to open the number input field.
+![entry](./readmeimgs/sud1.png)
+### Checking will change color to red if submission is wrong...
+![check wrong](./readmeimgs/sud2.png)
+### ...and green if submission is right!
+![check right](./readmeimgs/sud3.png)
 
-![entry]('../readmeimgs/sud1.png')
-![]()
-![]()
-## Video Demo:
